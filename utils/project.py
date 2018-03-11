@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os
 import re
-import urllib
+import urllib.request as request
 from threading import Thread
 
 DEFAULT_NUM_THREADS = 10 
@@ -23,12 +23,18 @@ def read_file(filepath):
     with open(filepath,"r") as f:
         return f.read()
 
-def test_urllib():
-    data = urllib.request.urlopen('https://archive.ics.uci.edu/ml/machine-learning-databases/hayes-roth/')
-    response = data.read()
-    response = response.decode('utf-8')
-    for filename in re.findall(URL_PATTERN, response):
-        print(filename[6:-1])
+def get_page(url):
+    r = request.urlopen(url)
+    page = r.read().decode('iso-8859-1')
+    return page
+    
+
+# def test_urllib():
+#     data = urllib.request.urlopen('https://archive.ics.uci.edu/ml/machine-learning-databases/hayes-roth/')
+#     response = data.read()
+#     response = response.decode('utf-8')
+#     for filename in re.findall(URL_PATTERN, response):
+#         print(filename[6:-1])
     
 # class MultithreaderDownloader():
 
