@@ -45,9 +45,30 @@ class UCI_page:
         save_file(rootpath+"/"+UCI_FOLDER+"/"+UCI_SOURCE_PAGE)
 
     def save_content_to_database(self):
-        # database = Database(cfg.ROOT_PROJECT_PATH+DATABASE_FOLDER)
-        # database.execute()
-        print(INSERT_SCRIPT.format(1,2,3,4,5,6,7,8,9,10))
+        database = Database(cfg.ROOT_PROJECT_PATH+DATABASE_FOLDER)
+        for i in range(self.dataset_amount):
+            print(INSERT_SCRIPT.format(i,\
+                        self.uci_datasets_urls[i],\
+                        self.uci_pictures_urs[i],\
+                        'null_folder',\
+                        self.uci_attributes[0][i],\
+                        self.uci_attributes[1][i],\
+                        self.uci_attributes[2][i],\
+                        self.uci_attributes[3][i],\
+                        self.uci_attributes[4][i],\
+                        self.uci_attributes[5][i]))
+            database.execute(INSERT_SCRIPT.format(i,\
+                        self.uci_datasets_urls[i],\
+                        self.uci_pictures_urs[i],\
+                        'null_folder',\
+                        self.uci_attributes[0][i],\
+                        self.uci_attributes[1][i],\
+                        self.uci_attributes[2][i],\
+                        self.uci_attributes[3][i],\
+                        self.uci_attributes[4][i],\
+                        self.uci_attributes[5][i]))
+        database.save()
+        database.close()
 
     def add_picture_url(self, parser):
         self.uci_pictures_urs.append(parser.find('img').get('src'))
@@ -75,7 +96,11 @@ class UCI_page:
         page = get_page(dataset_url)
         # page = requests.get(dataset_url).text
         parser = BeautifulSoup(page, PARSER)
-        url = parser.find('p').find('a').get('href')
+        try:
+            url = parser.find('p').find('a').get('href')
+        except AttributeError:
+            print("Folder URL for {} not found!".format(dataset_url))
+            return ""
         return url[3:]
 
     def get_dataset_amount(self):
@@ -93,8 +118,9 @@ def test_package():
     
     r = get_page('https://archive.ics.uci.edu/ml/datasets.html')
     uci_page = UCI_page(r)
-    uci_page.save_content_to_database()
-    # uci_page.parse_datasets_table()
+    
+    uci_page.parse_datasets_table()
     # uci_page.add_datasets_folder_urls()
+    uci_page.save_content_to_database()
     # uci_page.print_parsed_table()
     # uci_page.print_folders()

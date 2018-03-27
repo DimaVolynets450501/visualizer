@@ -25,16 +25,16 @@ sqlite> create table uci_content (
 
 DATABASE_PATH = cfg.ROOT_PROJECT_PATH + "/database/content.db"
 TABLE_NAME = 'uci_content'
-INSERT_SCRIPT = 'INSERT INTO uci_content (content_id,'\
-                                         'dataset_url,'\
-                                         'picture_url,'\
-                                         'folder_url,'\
-                                         'data_type,'\
-                                         'task,'\
-                                         'attribute_types,'\
-                                         'instances,'\
-                                         'attributes,year) '\
-                 'VALUES ({},{},{},{},{},{},{},{},{},{})'
+INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
+                                         "dataset_url,"\
+                                         "picture_url,"\
+                                         "folder_url,"\
+                                         "data_type,"\
+                                         "task,"\
+                                         "attribute_types,"\
+                                         "instances,"\
+                                         "attributes,year) "\
+                 "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
 
 class Database:
 
