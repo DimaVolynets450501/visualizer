@@ -3,6 +3,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from .project import create_folder, get_absolute_path, save_file, get_page
+from .database import Database, INSERT_SCRIPT
 
 sys.path.append('..')
 import conf.config as cfg
@@ -12,9 +13,10 @@ UCI_FOLDER = 'resources/uci'
 UCI_SOURCE_PAGE = 'uci_page.hmtl'
 BASE_UCI_URL_PART = 'https://archive.ics.uci.edu/ml'
 UCI_NUM_ATTRIBUTES = 6
+DATABASE_FOLDER = '/database/content.db'
 
 class UCI_page:
-    
+
     def __init__(self, page):
         self.uci_page = page
         self.parser = BeautifulSoup(self.uci_page, PARSER)
@@ -41,6 +43,11 @@ class UCI_page:
     def save_uci_page(rootpath):
         create_folder(rootpath+"/"+UCI_FOLDER)
         save_file(rootpath+"/"+UCI_FOLDER+"/"+UCI_SOURCE_PAGE)
+
+    def save_content_to_database(self):
+        # database = Database(cfg.ROOT_PROJECT_PATH+DATABASE_FOLDER)
+        # database.execute()
+        print(INSERT_SCRIPT.format(1,2,3,4,5,6,7,8,9,10))
 
     def add_picture_url(self, parser):
         self.uci_pictures_urs.append(parser.find('img').get('src'))
@@ -83,9 +90,11 @@ class UCI_page:
             print(url)
 
 def test_package():
+    
     r = get_page('https://archive.ics.uci.edu/ml/datasets.html')
     uci_page = UCI_page(r)
-    uci_page.parse_datasets_table()
-    uci_page.add_datasets_folder_urls()
+    uci_page.save_content_to_database()
+    # uci_page.parse_datasets_table()
+    # uci_page.add_datasets_folder_urls()
     # uci_page.print_parsed_table()
-    uci_page.print_folders()
+    # uci_page.print_folders()
