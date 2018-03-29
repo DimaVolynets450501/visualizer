@@ -17,15 +17,18 @@ DATABASE_FOLDER = '/database/content.db'
 
 class UCI_page:
 
-    def __init__(self, page):
-        self.uci_page = page
-        self.parser = BeautifulSoup(self.uci_page, PARSER)
-        self.set_dataset_amount()
+    def __init__(self):
         self.uci_datasets_urls = []
         self.uci_pictures_urs = []
         self.uci_folder_urls = []
         self.uci_attributes = [[] for i in range(UCI_NUM_ATTRIBUTES)]
 
+    def set_page(self, page):
+        self.uci_page = page
+
+    def set_parser(self):
+        self.parser = BeautifulSoup(self.uci_page, PARSER)
+        
     def set_dataset_amount(self):
         datasets = self.parser.find('p', attrs={'class':'big'})
         datasets = datasets.find_next('p', attrs={'class':'big'})
@@ -47,20 +50,10 @@ class UCI_page:
     def save_content_to_database(self):
         database = Database(cfg.ROOT_PROJECT_PATH+DATABASE_FOLDER)
         for i in range(self.dataset_amount):
-            print(INSERT_SCRIPT.format(i,\
-                        self.uci_datasets_urls[i],\
-                        self.uci_pictures_urs[i],\
-                        'null_folder',\
-                        self.uci_attributes[0][i],\
-                        self.uci_attributes[1][i],\
-                        self.uci_attributes[2][i],\
-                        self.uci_attributes[3][i],\
-                        self.uci_attributes[4][i],\
-                        self.uci_attributes[5][i]))
             database.execute(INSERT_SCRIPT.format(i,\
                         self.uci_datasets_urls[i],\
                         self.uci_pictures_urs[i],\
-                        'null_folder',\
+                        self.uci_folder_urls[i],\
                         self.uci_attributes[0][i],\
                         self.uci_attributes[1][i],\
                         self.uci_attributes[2][i],\
@@ -91,10 +84,8 @@ class UCI_page:
             print("-------------------------------------------------------------------")
             self.uci_folder_urls.append(url)
 
-    # TODO : add exeption handler
     def get_dataset_folder_url(self, dataset_url):
         page = get_page(dataset_url)
-        # page = requests.get(dataset_url).text
         parser = BeautifulSoup(page, PARSER)
         try:
             url = parser.find('p').find('a').get('href')
