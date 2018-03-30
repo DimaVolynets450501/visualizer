@@ -10,6 +10,7 @@ uci_content table
 --------------------------------------
 sqlite> create table uci_content (
    ...> content_id integer PRIMARY KEY,
+   ...> dataset_name text,
    ...> dataset_url text,
    ...> picture_url text,
    ...> folder_url text,
@@ -26,6 +27,7 @@ sqlite> create table uci_content (
 DATABASE_PATH = cfg.ROOT_PROJECT_PATH + "/database/content.db"
 TABLE_NAME = 'uci_content'
 INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
+                                         "dataset_name,"\
                                          "dataset_url,"\
                                          "picture_url,"\
                                          "folder_url,"\
@@ -34,7 +36,7 @@ INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
                                          "attribute_types,"\
                                          "instances,"\
                                          "attributes,year) "\
-                 "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
+                 "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
 
 SELECT_SCRIPT = "SELECT {} FROM uci_content;"
 

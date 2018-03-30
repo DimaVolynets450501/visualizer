@@ -63,6 +63,8 @@ class AppRunner():
 
     def init_uci_from_db(self):
         database = Database(config.ROOT_PROJECT_PATH+DATABASE_FOLDER, True)
+        self.uci_page.uci_dataset_name =\
+        database.execute(SELECT_SCRIPT.format('dataset_name')).fetchall()
         self.uci_page.uci_datasets_urls =\
         database.execute(SELECT_SCRIPT.format('dataset_url')).fetchall()
         self.uci_page.uci_pictures_urs =\

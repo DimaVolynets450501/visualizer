@@ -18,6 +18,7 @@ DATABASE_FOLDER = '/database/content.db'
 class UCI_page:
 
     def __init__(self):
+        self.uci_dataset_name = []
         self.uci_datasets_urls = []
         self.uci_pictures_urs = []
         self.uci_folder_urls = []
@@ -39,6 +40,7 @@ class UCI_page:
         table_line = table.find_next('tr')
         for i in range(self.dataset_amount):
             table_line = table_line.next_sibling
+            self.add_dataset_name(table_line)
             self.add_dataset_url(table_line)
             self.add_picture_url(table_line)
             self.add_dataset_attributes(table_line)
@@ -51,6 +53,7 @@ class UCI_page:
         database = Database(cfg.ROOT_PROJECT_PATH+DATABASE_FOLDER)
         for i in range(self.dataset_amount):
             database.execute(INSERT_SCRIPT.format(i,\
+                        self.uci_dataset_name[i],\
                         self.uci_datasets_urls[i],\
                         self.uci_pictures_urs[i],\
                         self.uci_folder_urls[i],\
@@ -62,7 +65,10 @@ class UCI_page:
                         self.uci_attributes[5][i]))
         database.save()
         database.close()
-        
+
+    def add_dataset_name(self, parser):
+        self.uci_dataset_name.append(parser.find('b').text.replace("'"," "))
+    
     def add_picture_url(self, parser):
         self.uci_pictures_urs.append(parser.find('img').get('src'))
 
@@ -77,11 +83,11 @@ class UCI_page:
 
     def add_datasets_folder_urls(self):
         for dataset_url in self.uci_datasets_urls:
-            print("-------------------------------------------------------------------")
-            print(BASE_UCI_URL_PART+"/"+dataset_url)
+            # print("-------------------------------------------------------------------")
+            # print(BASE_UCI_URL_PART+"/"+dataset_url)
             url = self.get_dataset_folder_url(BASE_UCI_URL_PART+"/"+dataset_url)
-            print(url)
-            print("-------------------------------------------------------------------")
+            # print(url)
+            # print("-------------------------------------------------------------------")
             self.uci_folder_urls.append(url)
 
     def get_dataset_folder_url(self, dataset_url):
