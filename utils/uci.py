@@ -3,7 +3,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from .project import create_folder, get_absolute_path, save_file, get_page
-from .database import Database, INSERT_SCRIPT
+from .database import Database, INSERT_SCRIPT, SELECT_SCRIPT
 
 sys.path.append('..')
 import conf.config as cfg
@@ -62,7 +62,7 @@ class UCI_page:
                         self.uci_attributes[5][i]))
         database.save()
         database.close()
-
+        
     def add_picture_url(self, parser):
         self.uci_pictures_urs.append(parser.find('img').get('src'))
 

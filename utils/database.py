@@ -36,10 +36,14 @@ INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
                                          "attributes,year) "\
                  "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
 
+SELECT_SCRIPT = "SELECT {} FROM uci_content;"
+
 class Database:
 
-    def __init__(self, path_to_db):
+    def __init__(self, path_to_db, with_row_factory=False):
         self.connection = sqlite3.connect(path_to_db)
+        if with_row_factory == True:
+            self.connection.row_factory = lambda cursor, row: row[0]
         self.db_cursor = self.connection.cursor()
 
     def execute(self, script):
