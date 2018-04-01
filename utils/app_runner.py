@@ -24,9 +24,9 @@ class AppRunner():
         self.init_project_path()
         self.load_uci_content()
         self.reload_config()
-        # app = QApplication(sys.argv)
-        # window = MainWindow()
-        # sys.exit(app.exec_())
+        app = QApplication(sys.argv)
+        window = MainWindow(self.uci_page)
+        sys.exit(app.exec_())
 
     def init_project_path(self):
         global RELOAD_IS_REQUIRED
@@ -63,6 +63,8 @@ class AppRunner():
 
     def init_uci_from_db(self):
         database = Database(config.ROOT_PROJECT_PATH+DATABASE_FOLDER, True)
+        self.uci_page.dataset_amount =\
+        database.execute(NUM_ROWS).fetchone()
         self.uci_page.uci_dataset_name =\
         database.execute(SELECT_SCRIPT.format('dataset_name')).fetchall()
         self.uci_page.uci_datasets_urls =\

@@ -10,8 +10,9 @@ CLOSE_APP_SHORTCUT = 'Ctrl+Q'
 
 class MainWindow(QWidget):
 
-    def __init__(self):
+    def __init__(self, uci_page):
         super().__init__()
+        self.uci_page = uci_page
         self.set_close_event()
         self.create_content_table()
         self.window_init()
@@ -23,7 +24,7 @@ class MainWindow(QWidget):
 
     def create_content_table(self):
         hlayout = QHBoxLayout()
-        self.content_table = ContentTable(self)
+        self.content_table = ContentTable(self, self.uci_page)
         hlayout.addWidget(self.content_table)
         self.setLayout(hlayout)
         

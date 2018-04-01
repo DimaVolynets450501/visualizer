@@ -3,7 +3,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from .project import create_folder, get_absolute_path, save_file, get_page
-from .database import Database, INSERT_SCRIPT, SELECT_SCRIPT
+from .database import Database, INSERT_SCRIPT, SELECT_SCRIPT, NUM_ROWS
 
 sys.path.append('..')
 import conf.config as cfg

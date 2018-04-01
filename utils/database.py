@@ -39,6 +39,7 @@ INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
                  "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
 
 SELECT_SCRIPT = "SELECT {} FROM uci_content;"
+NUM_ROWS = "SELECT COALESCE(MAX(content_id)+1, 0) FROM uci_content ;"
 
 class Database:
 
