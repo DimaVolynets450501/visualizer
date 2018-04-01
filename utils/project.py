@@ -4,7 +4,7 @@ import re
 import urllib.request as request
 from threading import Thread
 
-DEFAULT_NUM_THREADS = 10 
+# DEFAULT_NUM_THREADS = 10 
 URL_PATTERN = 'href="(?!Index)[\w|\-|\.]*"'
 
 def get_absolute_path():
@@ -28,6 +28,20 @@ def get_page(url):
     page = r.read().decode('iso-8859-1')
     return page
     
+def download_data(url, folder):
+    data = request.urlopen(url)
+    response = data.read()
+    response = response.decode('utf-8')
+    for filename in re.findall(URL_PATTERN, response):        
+        file_url = os.path.join(url, filename[6:-1])
+        file_in_folder = os.path.join(folder, filename[6:-1])
+        try:
+            os.stat(folder)
+        except:
+            os.mkdir(folder)
+        request.urlretrieve(file_url, file_in_folder)
+        print(filename[6:-1])
+
 
 # def test_urllib():
 #     data = urllib.request.urlopen('https://archive.ics.uci.edu/ml/machine-learning-databases/hayes-roth/')
