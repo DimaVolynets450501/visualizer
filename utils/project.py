@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 import os
 import re
+import csv
+import numpy
+import pandas as pd
 import urllib.request as request
 from threading import Thread
 
@@ -42,6 +45,24 @@ def download_data(url, folder):
         request.urlretrieve(file_url, file_in_folder)
         print(filename[6:-1])
 
+class DatasetImporter():
+
+    def __init__(self, filename):
+        print(os.path.splitext(filename))
+        self.parse_data_from_txt(filename)
+
+    def parse_data_from_txt(self, filename):
+        f = open(filename,"r")
+        reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
+        self.data = list(reader)
+
+    def get_np_data(self):
+        return numpy.array(self.data).astype('float')
+
+def test_dataimporter():
+    data_importer = DatasetImporter('/home/diman/study/visualizer/datasets/Wine/wine.data')
+    print(X)
+    # print(data_importer.get_np_data())
 
 # def test_urllib():
 #     data = urllib.request.urlopen('https://archive.ics.uci.edu/ml/machine-learning-databases/hayes-roth/')
