@@ -26,6 +26,9 @@ def read_file(filepath):
     with open(filepath,"r") as f:
         return f.read()
 
+def file_is_exists(filename):
+    return os.path.isfile(filename)
+
 def get_page(url):
     r = request.urlopen(url)
     page = r.read().decode('iso-8859-1')
@@ -45,23 +48,26 @@ def download_data(url, folder):
         request.urlretrieve(file_url, file_in_folder)
         print(filename[6:-1])
 
-class DatasetImporter():
-
+class ColumnImporter():
     def __init__(self, filename):
-        print(os.path.splitext(filename))
-        self.parse_data_from_txt(filename)
+        with open(filename) as f:
+            content = f.readlines()
+        self.cols = [x.strip() for x in content]
+        
+    def get_columns(self):
+        return self.cols
+    
+class DatasetImporter():
+    def __init__(self, filename, cols):
+        self.data = pd.read_csv(filename, names=cols)
 
-    def parse_data_from_txt(self, filename):
-        f = open(filename,"r")
-        reader = csv.reader(f, delimiter=',', quoting=csv.QUOTE_NONE)
-        self.data = list(reader)
-
-    def get_np_data(self):
-        return numpy.array(self.data).astype('float')
-
+    def get_dataset(self):
+        return self.data
+    
 def test_dataimporter():
-    data_importer = DatasetImporter('/home/diman/study/visualizer/datasets/Wine/wine.data')
-    print(X)
+    col_importer = ColumnImporter('/home/diman/study/visualizer/datasets/Wine/column_names.txt')
+    print(col_importer.get_columns())
+    
     # print(data_importer.get_np_data())
 
 # def test_urllib():

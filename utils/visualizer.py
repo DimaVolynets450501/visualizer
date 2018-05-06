@@ -48,7 +48,7 @@ def parallel_plot():
     data_norm = pd.concat([X_norm[plt_feat1], y], axis=1)
     data2 = pd.concat([X[plt_feat1], y], axis=1)
     # Perform parallel coordinate plot
-    parallel_coordinates(data2, 'Class')
+    parallel_coordinates(data_norm, 'Class')
     # parallel_coordinates(data_norm, 'Class')
     plt.show()
 
@@ -61,7 +61,7 @@ def andrew_curves():
     andrews_curves(data, 'Class')
     plt.show()
 
-def pd_hist():
+def pd_hist(X):
     transformed = pd.DataFrame(X)
     transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False)
     plt.show()

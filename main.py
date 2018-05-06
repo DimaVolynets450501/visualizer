@@ -6,15 +6,17 @@ import conf.config as cfg
 from utils.app_runner import AppRunner
 from utils.database import test_database
 from utils.visualizer import *
-
+# pmlb dataset
+# проблема бенчмаркинга
+# аналоги визуализации
 if __name__ == "__main__":
-    pd_hist()
+    # pd_hist()
     # andrew_curves()
     # parallel_plot()
     # pca_plot()
     # two_dm_plot()
     # test_dataimporter()
-    # app = AppRunner()
+    app = AppRunner()
     # # test_urllib()
     # UCI_page.print()
     # test_package()
