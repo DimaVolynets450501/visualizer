@@ -3,13 +3,14 @@
 import sys
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut, QHBoxLayout, QMenuBar, QMainWindow
-from PyQt5.QtWidgets import QAction,  QStackedWidget
+from PyQt5.QtWidgets import QAction,  QStackedWidget, QTableView
 from .content_table import ContentTable
-from .gui_actions import import_dataset_action, information_dialod
+from .gui_actions import import_dataset_action, information_dialod, info_import_dataset_dialog
 from .minor_window import PlotWindow
 
 sys.path.append('..')
 from utils.project import file_is_exists, ColumnImporter, DatasetImporter
+from utils.pandas_model import PandasModel
 
 APP_TITLE = 'Visualizer'
 CLOSE_APP_SHORTCUT = 'Ctrl+Q'
@@ -69,8 +70,16 @@ class MainWindow(QMainWindow):
             self.dataset_cols = ColumnImporter(DATASET_COLUMN_FILE).get_columns()
             dataset_importer = DatasetImporter(self.dataset_file, self.dataset_cols)
             self.dataset_data = dataset_importer.get_dataset()
-            information_dialod(SUCCESS_IMPORT_MESSAGE)
+            if info_import_dataset_dialog(SUCCESS_IMPORT_MESSAGE):
+                self.show_pandas_table()
 
+    def show_pandas_table(self):
+        pd_table = QTableView()
+        model = PandasModel(self.dataset_data)
+        pd_table.setModel(model)
+        self.central_widget.addWidget(pd_table)
+        self.central_widget.setCurrentWidget(pd_table)
+        
     def handle_hist_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_histogram(self.dataset_data)
@@ -108,5 +117,6 @@ class MainWindow(QMainWindow):
         shortcut.activated.connect(self.handle_central_widget)
 
     def handle_central_widget(self):
-        self.central_widget.removeWidget(self.plot_window)
+        cur_widget = self.central_widget.currentWidget()
+        self.central_widget.removeWidget(cur_widget)
         self.central_widget.setCurrentWidget(self.content_table)
