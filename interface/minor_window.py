@@ -31,21 +31,28 @@ class PlotWindow(QDialog):
         self.setLayout(layout)
         self.canvas.draw()
         
-    def draw_histogram(self):
+    def draw_histogram(self, data):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        cols =  ['Class', 'Alcohol', 'MalicAcid', 'Ash', 'AlcalinityOfAsh', 'Magnesium', 'TotalPhenols', 
-         'Flavanoids', 'NonflavanoidPhenols', 'Proanthocyanins', 'ColorIntensity', 
-         'Hue', 'OD280/OD315', 'Proline']
-        data = pd.read_csv('/home/diman/study/visualizer/datasets/Wine/wine.data', names=cols)
-        y = data['Class']
-        X = data.ix[:, 'Alcohol':]
-        X_norm = (X - X.min())/(X.max() - X.min())
-        self.transformed = pd.DataFrame(X)
-        
-        self.transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False, ax=ax)
-        
-        # self.figure.plot()
-        # plt.plot()
-        
+        data = data.ix[:,1:]
+        transformed = pd.DataFrame(data)
+        self.figure = transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=6, ylabelsize=6, grid=False, ax=ax)
+        [x.title.set_size(6) for x in self.figure.ravel()]
+
+    def draw_andrew_curves(self, data):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
+        andrews_curves(data, 'class', ax=ax)
+
+    def draw_parallel_coordinates(self, data):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
+        # ax.legend(loc='top left')
+        ax.tick_params(labelsize='small', rotation=90)
+        parallel_coordinates(data, 'class', ax=ax)
+
+    def draw_radviz(self, data):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
+        radviz(data, 'class', ax=ax)
         

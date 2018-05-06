@@ -55,8 +55,9 @@ class MainWindow(QMainWindow):
     def add_visualizer_bar_menus(self):
         file_menu = self.qmenubar.addMenu('&Visualizer')
         file_menu.addAction(self.histogram_plot_action())
-        # file_menu.addAction(self.quit_app_action())
-        # file_menu.addAction(self.open_dataset_action())
+        file_menu.addAction(self.andrew_plot_action())
+        file_menu.addAction(self.parallel_plot_action())
+        file_menu.addAction(self.radviz_plot_action())
 
     def set_dataset_file(self, filename):
         self.dataset_file = filename
@@ -82,8 +83,37 @@ class MainWindow(QMainWindow):
         
     def handle_hist_plot_action(self):
         self.plot_window = PlotWindow()
-        # self.plot_window.draw_histogram(self.dataset_data)
-        self.plot_window.draw_histogram()
+        self.plot_window.draw_histogram(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_andrew_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_andrew_curves(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_parallel_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_parallel_coordinates(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_radviz_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_radviz(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
         self.central_widget.addWidget(self.plot_window)
         self.central_widget.setCurrentWidget(self.plot_window)
         
@@ -111,6 +141,21 @@ class MainWindow(QMainWindow):
     def histogram_plot_action(self):
         action = QAction('Plot Histogram', self)
         action.triggered.connect(self.handle_hist_plot_action)
+        return action
+
+    def andrew_plot_action(self):
+        action = QAction("Plot Andrew's Curves", self)
+        action.triggered.connect(self.handle_andrew_plot_action)
+        return action
+
+    def parallel_plot_action(self):
+        action = QAction("Plot Parallel Coordinates", self)
+        action.triggered.connect(self.handle_parallel_plot_action)
+        return action
+
+    def radviz_plot_action(self):
+        action = QAction("Plot Radviz", self)
+        action.triggered.connect(self.handle_radviz_plot_action)
         return action
 
     def change_central_widget_event(self):
