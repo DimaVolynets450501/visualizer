@@ -82,7 +82,8 @@ class MainWindow(QMainWindow):
         
     def handle_hist_plot_action(self):
         self.plot_window = PlotWindow()
-        self.plot_window.draw_histogram(self.dataset_data)
+        # self.plot_window.draw_histogram(self.dataset_data)
+        self.plot_window.draw_histogram()
         self.central_widget.addWidget(self.plot_window)
         self.central_widget.setCurrentWidget(self.plot_window)
         

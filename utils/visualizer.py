@@ -61,7 +61,11 @@ def andrew_curves():
     andrews_curves(data, 'Class')
     plt.show()
 
-def pd_hist(X):
+def pd_hist():
+    data = pd.read_csv('/home/diman/study/visualizer/datasets/Wine/wine.data', names=cols)
+    y = data['Class']
+    X = data.ix[:, 'Alcohol':]
+    X_norm = (X - X.min())/(X.max() - X.min())
+
     transformed = pd.DataFrame(X)
-    transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False)
-    plt.show()
+    return transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False)

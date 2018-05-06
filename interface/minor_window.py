@@ -29,16 +29,23 @@ class PlotWindow(QDialog):
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
-
-    def draw_histogram(self, data):
+        self.canvas.draw()
+        
+    def draw_histogram(self):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        y = data['class']
+        cols =  ['Class', 'Alcohol', 'MalicAcid', 'Ash', 'AlcalinityOfAsh', 'Magnesium', 'TotalPhenols', 
+         'Flavanoids', 'NonflavanoidPhenols', 'Proanthocyanins', 'ColorIntensity', 
+         'Hue', 'OD280/OD315', 'Proline']
+        data = pd.read_csv('/home/diman/study/visualizer/datasets/Wine/wine.data', names=cols)
+        y = data['Class']
         X = data.ix[:, 'Alcohol':]
         X_norm = (X - X.min())/(X.max() - X.min())
         self.transformed = pd.DataFrame(X)
-        ax = self.transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False)
-        # # self.figure.plot()
+        
+        self.transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=8, ylabelsize=8, grid=False, ax=ax)
+        
+        # self.figure.plot()
         # plt.plot()
-        self.canvas.draw()
+        
         
