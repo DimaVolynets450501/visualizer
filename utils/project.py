@@ -63,7 +63,35 @@ class DatasetImporter():
 
     def get_dataset(self):
         return self.data
-    
+
+class Normalization():
+    def __init__(self, data_):
+        self.class_ = data_['class']
+        self.data = data_.ix[:,1:]
+
+    def normilize_by_max_value(self):
+        tmp = self.data
+        self.data = tmp / tmp.max()
+
+    def normilize_by_min_value(self):
+        tmp = self.data
+        self.data = tmp / tmp.min()
+
+    def normilize_by_mean_value(self):
+        tmp = self.data
+        self.data = tmp / tmp.mean()
+
+    def normilize_by_minimax(self):
+        tmp = self.data
+        self.data = (tmp - tmp.min())/(tmp.max() - tmp.min())
+
+    def mean_normilization(self):
+        tmp = self.data
+        self.data = (tmp - tmp.mean())/(tmp.max() - tmp.min())
+
+    def get_normilized_data(self):
+        return pd.concat([self.class_, self.data], axis=1)
+
 def test_dataimporter():
     col_importer = ColumnImporter('/home/diman/study/visualizer/datasets/Wine/column_names.txt')
     print(col_importer.get_columns())

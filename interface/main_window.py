@@ -11,6 +11,7 @@ from .minor_window import PlotWindow
 sys.path.append('..')
 from utils.project import file_is_exists, ColumnImporter, DatasetImporter
 from utils.pandas_model import PandasModel
+from utils.project import Normalization as Norm
 
 APP_TITLE = 'Visualizer'
 CLOSE_APP_SHORTCUT = 'Ctrl+Q'
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow):
         self.qmenubar = QMenuBar(self)
         self.add_file_bar_menus()
         self.add_visualizer_bar_menus()
+        self.add_normilization_bar_menus()
         self.setMenuBar(self.qmenubar)
 
     def add_file_bar_menus(self):
@@ -63,6 +65,14 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.pca_plot_action())
         file_menu.addAction(self.lda_plot_action())
 
+    def add_normilization_bar_menus(self):
+        file_menu = self.qmenubar.addMenu('&Normilization')
+        file_menu.addAction(self.norm_by_max_action())
+        file_menu.addAction(self.norm_by_min_action())
+        file_menu.addAction(self.norm_by_mean_action())
+        file_menu.addAction(self.norm_by_minimax_action())
+        file_menu.addAction(self.mean_norm_action())
+        
     def set_dataset_file(self, filename):
         self.dataset_file = filename
         print(self.dataset_file)
@@ -75,6 +85,7 @@ class MainWindow(QMainWindow):
             self.dataset_cols = ColumnImporter(DATASET_COLUMN_FILE).get_columns()
             dataset_importer = DatasetImporter(self.dataset_file, self.dataset_cols)
             self.dataset_data = dataset_importer.get_dataset()
+            self.bak_data = self.dataset_data
             if info_import_dataset_dialog(SUCCESS_IMPORT_MESSAGE):
                 self.show_pandas_table()
 
@@ -88,6 +99,7 @@ class MainWindow(QMainWindow):
     def handle_hist_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_histogram(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -97,6 +109,7 @@ class MainWindow(QMainWindow):
     def handle_andrew_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_andrew_curves(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -106,6 +119,7 @@ class MainWindow(QMainWindow):
     def handle_parallel_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_parallel_coordinates(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -116,6 +130,7 @@ class MainWindow(QMainWindow):
         self.plot_window = PlotWindow()
         self.plot_window.draw_radviz(self.dataset_data)
         cur_widget = self.central_widget.currentWidget()
+        self.dataset_data = self.bak_data
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
         self.central_widget.addWidget(self.plot_window)
@@ -124,6 +139,7 @@ class MainWindow(QMainWindow):
     def handle_heatmap_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_heatmap(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -133,6 +149,7 @@ class MainWindow(QMainWindow):
     def handle_scatter_matrix_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_scatter_matrix(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -142,6 +159,7 @@ class MainWindow(QMainWindow):
     def handle_pca_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_pca(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -151,6 +169,7 @@ class MainWindow(QMainWindow):
     def handle_lda_plot_action(self):
         self.plot_window = PlotWindow()
         self.plot_window.draw_lda(self.dataset_data)
+        self.dataset_data = self.bak_data
         cur_widget = self.central_widget.currentWidget()
         if cur_widget != self.content_table:
             self.central_widget.removeWidget(cur_widget)
@@ -217,11 +236,61 @@ class MainWindow(QMainWindow):
         action = QAction("Plot LDA", self)
         action.triggered.connect(self.handle_lda_plot_action)
         return action
+    
+    def norm_by_max_action(self):
+        action = QAction('Normilize data by max value', self)
+        action.triggered.connect(self.handle_norm_by_max_action)
+        return action
 
+    def norm_by_min_action(self):
+        action = QAction('Normilize data by min value', self)
+        action.triggered.connect(self.handle_norm_by_min_action)
+        return action
+
+    def norm_by_mean_action(self):
+        action = QAction('Normilize data by mean value', self)
+        action.triggered.connect(self.handle_norm_by_mean_action)
+        return action
+
+    def norm_by_minimax_action(self):
+        action = QAction('Normilize data by minimax method', self)
+        action.triggered.connect(self.handle_norm_by_minimax_action)
+        return action
+    
+    def mean_norm_action(self):
+        action = QAction('Normilize data by mean method', self)
+        action.triggered.connect(self.handle_norm_mean_action)
+        return action
+    
     def change_central_widget_event(self):
         shortcut = QShortcut(QKeySequence("Ctrl+n"), self)
         shortcut.activated.connect(self.handle_central_widget)
 
+    def handle_norm_by_max_action(self):
+        norm_data = Norm(self.dataset_data)
+        norm_data.normilize_by_max_value()
+        self.dataset_data = norm_data.get_normilized_data()
+
+    def handle_norm_by_min_action(self):
+        norm_data = Norm(self.dataset_data)
+        norm_data.normilize_by_min_value()
+        self.dataset_data = norm_data.get_normilized_data()
+
+    def handle_norm_by_mean_action(self):
+        norm_data = Norm(self.dataset_data)
+        norm_data.normilize_by_mean_value()
+        self.dataset_data = norm_data.get_normilized_data()
+
+    def handle_norm_by_minimax_action(self):
+        norm_data = Norm(self.dataset_data)
+        norm_data.normilize_by_minimax()
+        self.dataset_data = norm_data.get_normilized_data()
+
+    def handle_norm_mean_action(self):
+        norm_data = Norm(self.dataset_data)
+        norm_data.mean_normilization()
+        self.dataset_data = norm_data.get_normilized_data()
+        
     def handle_central_widget(self):
         cur_widget = self.central_widget.currentWidget()
         self.central_widget.removeWidget(cur_widget)
