@@ -10,8 +10,20 @@ from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
+colors = ['red',
+          'purple',
+          'lightgreen',
+          'mediumblue',
+          'pink',
+          'red',
+          'red',
+          'red',
+          'red',
+          'red',
+          'red']
+
 import numpy as np
-# from seaborn import heatmap
+from seaborn import heatmap
 
 import sys
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout
@@ -64,10 +76,9 @@ class PlotWindow(QDialog):
     def draw_heatmap(self, data):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        data = data = data.ix[:,1:]
-        ax.pcolor(data)
-        plt.yticks(np.arange(len(data.columns)), data.columns)
-        plt.xticks(np.arange(len(data.columns)), data.columns)
+        data = data.ix[:,1:]
+        corr = data.corr()
+        heatmap(corr, xticklabels=data.columns, yticklabels=data.columns, ax=ax, cmap="Reds")
 
     def draw_scatter_matrix(self, data):
         self.figure.clear()
@@ -78,23 +89,21 @@ class PlotWindow(QDialog):
         for x in range(n):
             for y in range(n):
                 ax = axs[x, y]
-                ax.xaxis.label.set_rotation(45)
+                ax.xaxis.label.set_rotation(90)
                 ax.yaxis.label.set_rotation(0)
-                # ax.yaxis.labelpad = 50
-                # for tick in ax.get_xticklabels():
-                    # tick.set_rotation(45)
+                ax.yaxis.labelpad = 50
 
     def draw_pca(self, data):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
         pca = PCA(n_components=2)
         class_ = data['class']
-        # print(class_)
+        classes = class_.drop_duplicates().tolist()
         data = data = data.ix[:,1:]
         transformed = pd.DataFrame(pca.fit_transform(data))
-        ax.scatter(transformed[class_==1][0], transformed[class_==1][1], label='Class 1', c='red')
-        ax.scatter(transformed[class_==2][0], transformed[class_==2][1], label='Class 2', c='blue')
-        ax.scatter(transformed[class_==3][0], transformed[class_==3][1], label='Class 3', c='lightgreen')
+        for cl in classes:
+            ax.scatter(transformed[class_==cl][0], transformed[class_==cl][1],\
+                       label='Class {}'.format(cl), c=colors[cl])
         ax.legend()
 
     def draw_lda(self, data):
@@ -102,10 +111,10 @@ class PlotWindow(QDialog):
         ax = self.figure.add_subplot(111)
         lda = LDA(n_components=2)
         class_ = data['class']
-        # print(class_)
+        classes = class_.drop_duplicates().tolist()
         data = data.ix[:,1:]
         transformed = pd.DataFrame(lda.fit_transform(data, class_))
-        ax.scatter(transformed[class_==1][0], transformed[class_==1][1], label='Class 1', c='red')
-        ax.scatter(transformed[class_==2][0], transformed[class_==2][1], label='Class 2', c='blue')
-        ax.scatter(transformed[class_==3][0], transformed[class_==3][1], label='Class 3', c='lightgreen')
+        for cl in classes:
+            ax.scatter(transformed[class_==cl][0], transformed[class_==cl][1],\
+                       label='Class {}'.format(cl), c=colors[cl])
         ax.legend()

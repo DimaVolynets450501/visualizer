@@ -6,7 +6,9 @@ import numpy
 import pandas as pd
 import urllib.request as request
 from threading import Thread
-
+from PyQt5.QtWidgets import QListView
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPushButton
 # DEFAULT_NUM_THREADS = 10 
 URL_PATTERN = 'href="(?!Index)[\w|\-|\.]*"'
 
@@ -92,6 +94,44 @@ class Normalization():
 
     def get_normilized_data(self):
         return pd.concat([self.class_, self.data], axis=1)
+
+class AttributeChooser(QDialog):
+    def __init__(self, cols_, parent):
+        super(AttributeChooser, self).__init__(parent)
+        self.cols = cols_
+        self.init_ui(self.create_checkbox_list())
+
+    def create_checkbox_list(self):
+        self.model = QStandardItemModel()
+        for col in self.cols:                   
+            item = QStandardItem(col)
+            item.setCheckable(True)
+            self.model.appendRow(item)
+        return self.model
+
+    def init_ui(self, model):
+        layout = QVBoxLayout()
+        view = QListView(self)
+        view.setModel(model)
+        button = QPushButton("Ok")
+        button.clicked.connect(self.set_new_cols)
+        layout.addWidget(view)
+        layout.addWidget(button)
+        self.setLayout(layout)
+
+    def set_new_cols(self):
+        i = 0
+        choosed_cols = ['class']
+        while self.model.item(i):
+            if self.model.item(i).checkState():
+                choosed_cols.append(self.cols[i])
+            i += 1
+        self.cols = choosed_cols
+        self.close()
+
+    def get_data(self):
+        self.exec_()
+        return self.cols
 
 def test_dataimporter():
     col_importer = ColumnImporter('/home/diman/study/visualizer/datasets/Wine/column_names.txt')

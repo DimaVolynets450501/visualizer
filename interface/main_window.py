@@ -12,6 +12,7 @@ sys.path.append('..')
 from utils.project import file_is_exists, ColumnImporter, DatasetImporter
 from utils.pandas_model import PandasModel
 from utils.project import Normalization as Norm
+from utils.project import AttributeChooser as Chooser
 
 APP_TITLE = 'Visualizer'
 CLOSE_APP_SHORTCUT = 'Ctrl+Q'
@@ -53,6 +54,7 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.open_file_action())
         file_menu.addAction(self.quit_app_action())
         file_menu.addAction(self.open_dataset_action())
+        file_menu.addAction(self.attr_choose_action())
 
     def add_visualizer_bar_menus(self):
         file_menu = self.qmenubar.addMenu('&Visualizer')
@@ -89,6 +91,10 @@ class MainWindow(QMainWindow):
             if info_import_dataset_dialog(SUCCESS_IMPORT_MESSAGE):
                 self.show_pandas_table()
 
+    def handle_attr_choose_action(self):
+        cols = Chooser(self.dataset_cols[1:], self).get_data()
+        self.dataset_data = self.dataset_data[cols]
+        
     def show_pandas_table(self):
         pd_table = QTableView()
         model = PandasModel(self.dataset_data)
@@ -181,6 +187,11 @@ class MainWindow(QMainWindow):
         action.setShortcut('Ctrl+O')
         action.setStatusTip('Open file with dataset')
         action.triggered.connect(self.close)
+        return action
+    
+    def attr_choose_action(self):
+        action = QAction('Choose Attributes', self)
+        action.triggered.connect(self.handle_attr_choose_action)
         return action
 
     def quit_app_action(self):
