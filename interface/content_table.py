@@ -10,6 +10,7 @@ sys.path.append('..')
 from utils.uci import BASE_UCI_URL_PART
 from utils.project import download_data
 from conf.config import ROOT_PROJECT_PATH
+from .gui_actions import information_dialod
 
 TABLE_HEADERS = ["Name",
                  "Data Types",
@@ -20,6 +21,8 @@ TABLE_HEADERS = ["Name",
                  "Year"]
 
 SELECTION_COLOR = "QTableWidget::item:selected{ background-color: rgba(150,200,255,170);}"
+
+DOWNLOAD_MESSAGE = "Dataset was downloaded successfully"
 
 class ContentTable(QTableWidget):
 
@@ -71,5 +74,6 @@ class ContentTable(QTableWidget):
         url = os.path.join(BASE_UCI_URL_PART, folder_url)
         dataset_folder = os.path.join(ROOT_PROJECT_PATH,'datasets', dataset_name)
         download_data(url, dataset_folder)
+        information_dialod(DOWNLOAD_MESSAGE)
         # for currentQTableWidgetItem in self.tableWidget.selectedItems():
             # print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())

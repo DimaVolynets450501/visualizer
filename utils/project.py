@@ -33,11 +33,12 @@ def get_page(url):
     r = request.urlopen(url)
     page = r.read().decode('iso-8859-1')
     return page
-    
+
 def download_data(url, folder):
     data = request.urlopen(url)
     response = data.read()
     response = response.decode('utf-8')
+    
     for filename in re.findall(URL_PATTERN, response):        
         file_url = os.path.join(url, filename[6:-1])
         file_in_folder = os.path.join(folder, filename[6:-1])
