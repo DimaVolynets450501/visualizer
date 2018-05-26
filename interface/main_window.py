@@ -58,6 +58,10 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.andrew_plot_action())
         file_menu.addAction(self.parallel_plot_action())
         file_menu.addAction(self.radviz_plot_action())
+        file_menu.addAction(self.heatmap_plot_action())
+        file_menu.addAction(self.scatter_matrix_plot_action())
+        file_menu.addAction(self.pca_plot_action())
+        file_menu.addAction(self.lda_plot_action())
 
     def set_dataset_file(self, filename):
         self.dataset_file = filename
@@ -116,7 +120,43 @@ class MainWindow(QMainWindow):
             self.central_widget.removeWidget(cur_widget)
         self.central_widget.addWidget(self.plot_window)
         self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_heatmap_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_heatmap(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_scatter_matrix_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_scatter_matrix(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
+    def handle_pca_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_pca(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
         
+    def handle_lda_plot_action(self):
+        self.plot_window = PlotWindow()
+        self.plot_window.draw_lda(self.dataset_data)
+        cur_widget = self.central_widget.currentWidget()
+        if cur_widget != self.content_table:
+            self.central_widget.removeWidget(cur_widget)
+        self.central_widget.addWidget(self.plot_window)
+        self.central_widget.setCurrentWidget(self.plot_window)
+
     def open_file_action(self):
         action = QAction('Open', self)
         action.setShortcut('Ctrl+O')
@@ -156,6 +196,26 @@ class MainWindow(QMainWindow):
     def radviz_plot_action(self):
         action = QAction("Plot Radviz", self)
         action.triggered.connect(self.handle_radviz_plot_action)
+        return action
+
+    def heatmap_plot_action(self):
+        action = QAction("Plot Heatmap", self)
+        action.triggered.connect(self.handle_heatmap_plot_action)
+        return action
+
+    def scatter_matrix_plot_action(self):
+        action = QAction("Plot Scatter Matrix", self)
+        action.triggered.connect(self.handle_scatter_matrix_plot_action)
+        return action
+
+    def pca_plot_action(self):
+        action = QAction("Plot PCA", self)
+        action.triggered.connect(self.handle_pca_plot_action)
+        return action
+
+    def lda_plot_action(self):
+        action = QAction("Plot LDA", self)
+        action.triggered.connect(self.handle_lda_plot_action)
         return action
 
     def change_central_widget_event(self):
