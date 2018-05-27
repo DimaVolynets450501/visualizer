@@ -2,11 +2,12 @@
 
 import sys
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QWidget, QShortcut, QHBoxLayout, QMenuBar, QMainWindow
+from PyQt5.QtWidgets import QWidget, QShortcut, QHBoxLayout, QMenuBar, QMainWindow, QMessageBox
 from PyQt5.QtWidgets import QAction,  QStackedWidget, QTableView
 from .content_table import ContentTable
-from .gui_actions import import_dataset_action, information_dialod, info_import_dataset_dialog
+from .gui_actions import import_dataset_action, information_dialod, info_import_dataset_dialog, custom_info__dialog
 from .minor_window import PlotWindow
+import pandas as pd
 
 sys.path.append('..')
 from utils.project import file_is_exists, ColumnImporter, DatasetImporter
@@ -16,8 +17,10 @@ from utils.project import AttributeChooser as Chooser
 
 APP_TITLE = 'Visualizer'
 CLOSE_APP_SHORTCUT = 'Ctrl+Q'
-NOT_SUCCESS_IMPORT_MESSAGE = 'You should create col_name.txt for importing this dataset'
-SUCCESS_IMPORT_MESSAGE = 'Dataset was import successfully'
+NOT_SUCCESS_IMPORT_MESSAGE = 'You should create column_names.txt file for importing this dataset!'
+SUCCESS_IMPORT_MESSAGE = 'Dataset was imported successfully'
+NO_DATASET_MESSAGE = 'There is no available dataset. Please, import it'
+NORMILIZED_BY_MESSAGE = 'Dataset was normilized by {}'
 # TODO change hardcoded path
 DATASET_COLUMN_FILE = '/home/diman/study/visualizer/datasets/Wine/column_names.txt'
 
@@ -30,6 +33,7 @@ class MainWindow(QMainWindow):
         self.create_content_table()
         self.window_init()
         self.change_central_widget_event()
+        self.dataset_data = pd.DataFrame()
 
     def window_init(self):
         self.setWindowTitle(APP_TITLE)
@@ -51,10 +55,11 @@ class MainWindow(QMainWindow):
 
     def add_file_bar_menus(self):
         file_menu = self.qmenubar.addMenu('&File')
-        file_menu.addAction(self.open_file_action())
-        file_menu.addAction(self.quit_app_action())
         file_menu.addAction(self.open_dataset_action())
         file_menu.addAction(self.attr_choose_action())
+        file_menu.addAction(self.show_pandas_action())
+        file_menu.addAction(self.quit_app_action())
+        
 
     def add_visualizer_bar_menus(self):
         file_menu = self.qmenubar.addMenu('&Visualizer')
@@ -92,101 +97,130 @@ class MainWindow(QMainWindow):
                 self.show_pandas_table()
 
     def handle_attr_choose_action(self):
-        cols = Chooser(self.dataset_cols[1:], self).get_data()
-        self.dataset_data = self.dataset_data[cols]
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            cols = Chooser(self.dataset_cols[1:], self).get_data()
+            self.dataset_data = self.dataset_data[cols]
         
     def show_pandas_table(self):
-        pd_table = QTableView()
-        model = PandasModel(self.dataset_data)
-        pd_table.setModel(model)
-        self.central_widget.addWidget(pd_table)
-        self.central_widget.setCurrentWidget(pd_table)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            pd_table = QTableView()
+            model = PandasModel(self.dataset_data)
+            pd_table.setModel(model)
+            self.central_widget.addWidget(pd_table)
+            self.central_widget.setCurrentWidget(pd_table)
         
     def handle_hist_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_histogram(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_histogram(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_andrew_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_andrew_curves(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_andrew_curves(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_parallel_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_parallel_coordinates(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_parallel_coordinates(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_radviz_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_radviz(self.dataset_data)
-        cur_widget = self.central_widget.currentWidget()
-        self.dataset_data = self.bak_data
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_radviz(self.dataset_data)
+            cur_widget = self.central_widget.currentWidget()
+            self.dataset_data = self.bak_data
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_heatmap_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_heatmap(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_heatmap(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_scatter_matrix_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_scatter_matrix(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_scatter_matrix(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
     def handle_pca_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_pca(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_pca(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
         
     def handle_lda_plot_action(self):
-        self.plot_window = PlotWindow()
-        self.plot_window.draw_lda(self.dataset_data)
-        self.dataset_data = self.bak_data
-        cur_widget = self.central_widget.currentWidget()
-        if cur_widget != self.content_table:
-            self.central_widget.removeWidget(cur_widget)
-        self.central_widget.addWidget(self.plot_window)
-        self.central_widget.setCurrentWidget(self.plot_window)
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            self.plot_window = PlotWindow()
+            self.plot_window.draw_lda(self.dataset_data)
+            self.dataset_data = self.bak_data
+            cur_widget = self.central_widget.currentWidget()
+            if cur_widget != self.content_table:
+                self.central_widget.removeWidget(cur_widget)
+            self.central_widget.addWidget(self.plot_window)
+            self.central_widget.setCurrentWidget(self.plot_window)
 
-    def open_file_action(self):
-        action = QAction('Open', self)
-        action.setShortcut('Ctrl+O')
-        action.setStatusTip('Open file with dataset')
-        action.triggered.connect(self.close)
+    def show_pandas_action(self):
+        action = QAction('Show imported dataset', self)
+        action.setShortcut('Ctrl+s')
+        action.triggered.connect(self.show_pandas_table)
         return action
     
     def attr_choose_action(self):
@@ -278,29 +312,49 @@ class MainWindow(QMainWindow):
         shortcut.activated.connect(self.handle_central_widget)
 
     def handle_norm_by_max_action(self):
-        norm_data = Norm(self.dataset_data)
-        norm_data.normilize_by_max_value()
-        self.dataset_data = norm_data.get_normilized_data()
-
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            norm_data = Norm(self.dataset_data)
+            norm_data.normilize_by_max_value()
+            self.dataset_data = norm_data.get_normilized_data()
+            information_dialod(NORMILIZED_BY_MESSAGE.format("by max value"))
+            
     def handle_norm_by_min_action(self):
-        norm_data = Norm(self.dataset_data)
-        norm_data.normilize_by_min_value()
-        self.dataset_data = norm_data.get_normilized_data()
-
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            norm_data = Norm(self.dataset_data)
+            norm_data.normilize_by_min_value()
+            self.dataset_data = norm_data.get_normilized_data()
+            information_dialod(NORMILIZED_BY_MESSAGE.format("by min value"))
+            
     def handle_norm_by_mean_action(self):
-        norm_data = Norm(self.dataset_data)
-        norm_data.normilize_by_mean_value()
-        self.dataset_data = norm_data.get_normilized_data()
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            norm_data = Norm(self.dataset_data)
+            norm_data.normilize_by_mean_value()
+            self.dataset_data = norm_data.get_normilized_data()
+            information_dialod(NORMILIZED_BY_MESSAGE.format("by mean value"))
 
     def handle_norm_by_minimax_action(self):
-        norm_data = Norm(self.dataset_data)
-        norm_data.normilize_by_minimax()
-        self.dataset_data = norm_data.get_normilized_data()
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            norm_data = Norm(self.dataset_data)
+            norm_data.normilize_by_minimax()
+            self.dataset_data = norm_data.get_normilized_data()
+            information_dialod(NORMILIZED_BY_MESSAGE.format("minimax method"))
 
     def handle_norm_mean_action(self):
-        norm_data = Norm(self.dataset_data)
-        norm_data.mean_normilization()
-        self.dataset_data = norm_data.get_normilized_data()
+        if len(self.dataset_data.index) == 0:
+            information_dialod(NO_DATASET_MESSAGE)
+        else:
+            norm_data = Norm(self.dataset_data)
+            norm_data.mean_normilization()
+            self.dataset_data = norm_data.get_normilized_data()
+            information_dialod(NORMILIZED_BY_MESSAGE.format("mean method"))
         
     def handle_central_widget(self):
         cur_widget = self.central_widget.currentWidget()

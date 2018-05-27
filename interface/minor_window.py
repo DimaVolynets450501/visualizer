@@ -47,6 +47,7 @@ class PlotWindow(QDialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
         self.canvas.draw()
+        # self.show()
         
     def draw_histogram(self, data):
         self.figure.clear()

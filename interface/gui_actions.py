@@ -20,6 +20,11 @@ def import_dataset_action():
 def information_dialod(message):
     QMessageBox.information(None, APP_INFORMATION, message, QMessageBox.Ok )
 
+def information_download_dialod(message):
+    return QMessageBox.information(None, APP_INFORMATION, message, QMessageBox.Ok|QMessageBox.No )
+    # msg_box.show()
+    
+
 def info_import_dataset_dialog(message):
     msg_box = QMessageBox(QMessageBox.Information,APP_INFORMATION, message)
     ok_btn = msg_box.addButton("OK", QMessageBox.AcceptRole)
@@ -30,3 +35,12 @@ def info_import_dataset_dialog(message):
         return True
     else:
         return False
+
+def custom_info__dialog( message):
+    msg_box = QMessageBox(QMessageBox.Information, APP_INFORMATION, message)
+    ok_btn = msg_box.addButton("OK", QMessageBox.AcceptRole)
+    show_btn = msg_box.addButton("Show Dataset", QMessageBox.AcceptRole)
+    msg_box.exec_()
+
+    if msg_box.clickedButton() == show_btn:
+        msg_box.close()

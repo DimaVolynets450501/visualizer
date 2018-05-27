@@ -3,9 +3,9 @@
 import os
 import sys
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView, QTableView
-from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.QtWidgets import QAbstractItemView, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSlot
-
+from .gui_actions import information_download_dialod
 sys.path.append('..')
 from utils.uci import BASE_UCI_URL_PART
 from utils.project import download_data
@@ -22,7 +22,8 @@ TABLE_HEADERS = ["Name",
 
 SELECTION_COLOR = "QTableWidget::item:selected{ background-color: rgba(150,200,255,170);}"
 
-DOWNLOAD_MESSAGE = "Dataset was downloaded successfully"
+DOWNLOAD_MESSAGE = "Dataset {} was downloaded successfully"
+BEFORE_DOWNLOAD_MESSAGE = "Do you really want to download dataset {}"
 
 class ContentTable(QTableWidget):
 
@@ -71,9 +72,10 @@ class ContentTable(QTableWidget):
         index = self.currentRow()
         folder_url = self.uci.uci_folder_urls[index]
         dataset_name = self.uci.uci_dataset_name[index]
-        url = os.path.join(BASE_UCI_URL_PART, folder_url)
-        dataset_folder = os.path.join(ROOT_PROJECT_PATH,'datasets', dataset_name)
-        download_data(url, dataset_folder)
-        information_dialod(DOWNLOAD_MESSAGE)
+        if information_download_dialod(BEFORE_DOWNLOAD_MESSAGE.format(dataset_name)) == QMessageBox.Ok:
+            url = os.path.join(BASE_UCI_URL_PART, folder_url)
+            dataset_folder = os.path.join(ROOT_PROJECT_PATH,'datasets', dataset_name)
+            download_data(url, dataset_folder)
+            information_dialod(DOWNLOAD_MESSAGE.format(dataset_name))
         # for currentQTableWidgetItem in self.tableWidget.selectedItems():
             # print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
