@@ -10,7 +10,7 @@ from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
-colors = ['red',
+colors_list = ['red',
           'purple',
           'lightgreen',
           'mediumblue',
@@ -24,6 +24,7 @@ colors = ['red',
 
 import numpy as np
 from seaborn import heatmap
+from seaborn import pairplot
 
 import sys
 from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout
@@ -84,8 +85,14 @@ class PlotWindow(QDialog):
     def draw_scatter_matrix(self, data):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
+        class_ = data['class']
         data = data.ix[:,1:]
-        axs = scatter_matrix(data, alpha=0.2, figsize=(6, 6), diagonal='kde', ax=ax)
+        colors = list()
+        palette = {1: "red", 2: "green", 3: "blue"}
+        #
+        for row in class_: colors.append(palette[row])
+        # colors = class_.map(lambda x: color_wheel.get(x + 1))
+        axs = scatter_matrix(data, c=colors ,alpha=0.6 ,figsize=(6, 6), diagonal='kde', ax=ax)
         n = len(data.columns)
         for x in range(n):
             for y in range(n):
@@ -104,7 +111,7 @@ class PlotWindow(QDialog):
         transformed = pd.DataFrame(pca.fit_transform(data))
         for cl in classes:
             ax.scatter(transformed[class_==cl][0], transformed[class_==cl][1],\
-                       label='Class {}'.format(cl), c=colors[cl])
+                       label='Class {}'.format(cl), c=colors_list[cl])
         ax.legend()
 
     def draw_lda(self, data):
@@ -117,5 +124,5 @@ class PlotWindow(QDialog):
         transformed = pd.DataFrame(lda.fit_transform(data, class_))
         for cl in classes:
             ax.scatter(transformed[class_==cl][0], transformed[class_==cl][1],\
-                       label='Class {}'.format(cl), c=colors[cl])
+                       label='Class {}'.format(cl), c=colors_list[cl])
         ax.legend()
