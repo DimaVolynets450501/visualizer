@@ -55,7 +55,7 @@ class PlotWindow(QDialog):
         ax = self.figure.add_subplot(111)
         data = data.ix[:,1:]
         transformed = pd.DataFrame(data)
-        self.figure = transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=6, ylabelsize=6, grid=False, ax=ax)
+        self.figure = transformed.hist(bins=15, color='steelblue', edgecolor='black', linewidth=1.0,xlabelsize=5, ylabelsize=5, grid=False, ax=ax)
         [x.title.set_size(6) for x in self.figure.ravel()]
 
     def draw_andrew_curves(self, data):
@@ -67,7 +67,7 @@ class PlotWindow(QDialog):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
         # ax.legend(loc='top left')
-        ax.tick_params(labelsize='small', rotation=90)
+        ax.tick_params(labelsize='6', rotation=30)
         parallel_coordinates(data, 'class', ax=ax)
 
     def draw_radviz(self, data):
@@ -80,7 +80,10 @@ class PlotWindow(QDialog):
         ax = self.figure.add_subplot(111)
         data = data.ix[:,1:]
         corr = data.corr()
-        heatmap(corr, xticklabels=data.columns, yticklabels=data.columns, ax=ax, cmap="Reds")
+        ax.tick_params(axis='both', labelsize=6)
+        ax=heatmap(corr, xticklabels=data.columns, yticklabels=data.columns, ax=ax, cmap="Reds")
+        for tick in ax.get_xticklabels():
+            tick.set_rotation(30)
 
     def draw_scatter_matrix(self, data):
         self.figure.clear()
@@ -91,14 +94,18 @@ class PlotWindow(QDialog):
         palette = {1: "red", 2: "green", 3: "blue"}
         #
         for row in class_: colors.append(palette[row])
-        # colors = class_.map(lambda x: color_wheel.get(x + 1))
         axs = scatter_matrix(data, c=colors ,alpha=0.6 ,figsize=(6, 6), diagonal='kde', ax=ax)
         n = len(data.columns)
         for x in range(n):
             for y in range(n):
                 ax = axs[x, y]
-                ax.xaxis.label.set_rotation(90)
+                ax.tick_params(axis='both', labelsize=4)
+                for tick in ax.get_xticklabels():
+                    tick.set_rotation(0)
+                ax.xaxis.label.set_rotation(30)
+                ax.xaxis.label.set_fontsize(6)
                 ax.yaxis.label.set_rotation(0)
+                ax.yaxis.label.set_fontsize(8)
                 ax.yaxis.labelpad = 50
 
     def draw_pca(self, data):
