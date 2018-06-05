@@ -58,9 +58,9 @@ class AppRunner():
     def init_uci_page(self):
         url = os.path.join(BASE_UCI_URL_PART,'datasets.html')
         self.uci_page = UCI_page()
-        # self.uci_page.set_page(get_page(url))
-        # self.uci_page.set_parser()
-        # self.uci_page.set_dataset_amount()
+        self.uci_page.set_page(get_page(url))
+        self.uci_page.set_parser()
+        self.uci_page.set_dataset_amount()
 
     def init_uci_from_db(self):
         database = Database(config.ROOT_PROJECT_PATH+DATABASE_FOLDER, True)

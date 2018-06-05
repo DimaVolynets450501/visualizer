@@ -77,5 +77,3 @@ class ContentTable(QTableWidget):
             dataset_folder = os.path.join(ROOT_PROJECT_PATH,'datasets', dataset_name)
             download_data(url, dataset_folder)
             information_dialod(DOWNLOAD_MESSAGE.format(dataset_name))
-        # for currentQTableWidgetItem in self.tableWidget.selectedItems():
-            # print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())

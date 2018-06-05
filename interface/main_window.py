@@ -22,7 +22,7 @@ NOT_SUCCESS_IMPORT_MESSAGE = 'You should create column_names.txt file for import
 SUCCESS_IMPORT_MESSAGE = 'Dataset was imported successfully'
 NO_DATASET_MESSAGE = 'There is no available dataset. Please, import it'
 NORMILIZED_BY_MESSAGE = 'Dataset was normilized by {}'
-# TODO change hardcoded path
+
 DATASET_COLUMN_FILE = '/home/diman/study/visualizer/datasets/Wine/column_names.txt'
 
 class MainWindow(QMainWindow):

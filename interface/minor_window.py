@@ -92,7 +92,7 @@ class PlotWindow(QDialog):
         data = data.ix[:,1:]
         colors = list()
         palette = {1: "red", 2: "green", 3: "blue"}
-        #
+        
         for row in class_: colors.append(palette[row])
         axs = scatter_matrix(data, c=colors ,alpha=0.6 ,figsize=(6, 6), diagonal='kde', ax=ax)
         n = len(data.columns)

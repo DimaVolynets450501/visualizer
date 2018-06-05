@@ -110,14 +110,3 @@ class UCI_page:
     def print_folders(self):
         for url in self.uci_folder_urls:
             print(url)
-
-def test_package():
-    
-    r = get_page('https://archive.ics.uci.edu/ml/datasets.html')
-    uci_page = UCI_page(r)
-    
-    uci_page.parse_datasets_table()
-    # uci_page.add_datasets_folder_urls()
-    uci_page.save_content_to_database()
-    # uci_page.print_parsed_table()
-    # uci_page.print_folders()
