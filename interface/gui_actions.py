@@ -4,7 +4,6 @@ import sys
 from PyQt5.QtWidgets import QFileDialog, QWidget, QMessageBox
 
 
-# TODO change hardcoded path
 DATASETS_FOLDER = '/home/diman/study/visualizer/datasets'
 QMETHOD = 'QFileDialog.getOpenFileName()'
 FILE_PATTERN = 'Data files (*.data);;Csv files (*.csv)'

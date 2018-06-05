@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 import sys
+import os
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut, QHBoxLayout, QMenuBar, QMainWindow, QMessageBox
 from PyQt5.QtWidgets import QAction,  QStackedWidget, QTableView
 from .content_table import ContentTable
-from .gui_actions import import_dataset_action, information_dialod, info_import_dataset_dialog, custom_info__dialog
 from .minor_window import PlotWindow
 import pandas as pd
 
@@ -14,6 +14,7 @@ from utils.project import file_is_exists, ColumnImporter, DatasetImporter
 from utils.pandas_model import PandasModel
 from utils.project import Normalization as Norm
 from utils.project import AttributeChooser as Chooser
+from utils.project import information_dialod, info_import_dataset_dialog, import_dataset_action
 
 APP_TITLE = 'Visualizer'
 CLOSE_APP_SHORTCUT = 'Ctrl+Q'
@@ -85,11 +86,14 @@ class MainWindow(QMainWindow):
         print(self.dataset_file)
         
     def handle_open_dataset_action(self):
-        self.set_dataset_file(import_dataset_action())
-        if not file_is_exists(DATASET_COLUMN_FILE):
+        filename = import_dataset_action()
+        column_file = os.path.dirname(filename)+"/column_names.txt"
+        print(column_file)
+        self.set_dataset_file(filename)
+        if not file_is_exists(column_file):
             information_dialod(NOT_SUCCESS_IMPORT_MESSAGE)
         else:
-            self.dataset_cols = ColumnImporter(DATASET_COLUMN_FILE).get_columns()
+            self.dataset_cols = ColumnImporter(column_file).get_columns()
             dataset_importer = DatasetImporter(self.dataset_file, self.dataset_cols)
             self.dataset_data = dataset_importer.get_dataset()
             self.bak_data = self.dataset_data

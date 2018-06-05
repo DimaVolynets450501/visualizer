@@ -5,12 +5,12 @@ import sys
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView, QTableView
 from PyQt5.QtWidgets import QAbstractItemView, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSlot
-from .gui_actions import information_download_dialod
 sys.path.append('..')
 from utils.uci import BASE_UCI_URL_PART
 from utils.project import download_data
+from utils.project import information_dialod, information_download_dialod
+
 from conf.config import ROOT_PROJECT_PATH
-from .gui_actions import information_dialod
 
 TABLE_HEADERS = ["Name",
                  "Data Types",

@@ -9,8 +9,15 @@ from threading import Thread
 from PyQt5.QtWidgets import QListView
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QFileDialog, QMessageBox
+
 # DEFAULT_NUM_THREADS = 10 
 URL_PATTERN = 'href="(?!Index)[\w|\-|\.]*"'
+
+DATASETS_FOLDER = '/home/diman/study/visualizer/datasets'
+QMETHOD = 'QFileDialog.getOpenFileName()'
+FILE_PATTERN = 'Data files (*.data);;Csv files (*.csv)'
+APP_INFORMATION = 'Import dataset message'
 
 def get_absolute_path():
     return os.getcwd()
@@ -35,6 +42,39 @@ def get_page(url):
     r = request.urlopen(url)
     page = r.read().decode('iso-8859-1')
     return page
+
+def import_dataset_action():
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    filename,_ = QFileDialog.getOpenFileName(None, QMETHOD,\
+            DATASETS_FOLDER, FILE_PATTERN, options=options)
+    return filename
+
+def information_dialod(message):
+    QMessageBox.information(None, APP_INFORMATION, message, QMessageBox.Ok )
+
+def information_download_dialod(message):
+    return QMessageBox.information(None, APP_INFORMATION, message, QMessageBox.Ok|QMessageBox.No )
+
+def info_import_dataset_dialog(message):
+    msg_box = QMessageBox(QMessageBox.Information,APP_INFORMATION, message)
+    ok_btn = msg_box.addButton("OK", QMessageBox.AcceptRole)
+    show_btn = msg_box.addButton("Show Dataset", QMessageBox.AcceptRole)
+    msg_box.exec_()
+
+    if msg_box.clickedButton() == show_btn:
+        return True
+    else:
+        return False
+
+def custom_info__dialog( message):
+    msg_box = QMessageBox(QMessageBox.Information, APP_INFORMATION, message)
+    ok_btn = msg_box.addButton("OK", QMessageBox.AcceptRole)
+    show_btn = msg_box.addButton("Show Dataset", QMessageBox.AcceptRole)
+    msg_box.exec_()
+
+    if msg_box.clickedButton() == show_btn:
+        msg_box.close()
 
 def download_data(url, folder):
     data = request.urlopen(url)
