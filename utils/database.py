@@ -26,7 +26,7 @@ sqlite> create table uci_content (
 
 DATABASE_PATH = cfg.ROOT_PROJECT_PATH + "/database/content.db"
 TABLE_NAME = 'uci_content'
-INSERT_SCRIPT = "INSERT INTO uci_content (content_id,"\
+INSERT_SCRIPT = "INSERT OR IGNORE INTO uci_content (content_id,"\
                                          "dataset_name,"\
                                          "dataset_url,"\
                                          "picture_url,"\
