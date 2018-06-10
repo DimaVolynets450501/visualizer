@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication
 import configparser
 from .uci import *
 from .project import get_page, get_absolute_path
+from .project import internet_on, information_dialod
 
 sys.path.append('..')
 from interface.main_window import MainWindow
@@ -17,6 +18,7 @@ APP_CONFIG = {
 }
 RELOAD_IS_REQUIRED = 0
 UCI_ATTRS = ['data_type', 'task', 'attribute_types', 'instances', 'attributes', 'year']
+CONNECTION_ERROR_MESS = 'There is now connection to internet. Check your network and restart app!'
 
 class AppRunner():
 
@@ -38,16 +40,29 @@ class AppRunner():
     def load_uci_content(self):
         global RELOAD_IS_REQUIRED
         if config.IS_DATABASE_FILLED == 0:
-            self.init_uci_page()
-            self.parse_content_for_page()
-            self.uci_page.save_content_to_database()
-            config.IS_DATABASE_FILLED = 1
-            APP_CONFIG['IS_DATABASE_FILLED'] = 1
-            RELOAD_IS_REQUIRED = 1
+            if internet_on() == True:
+                self.init_uci_page()
+                self.parse_content_for_page()
+                self.uci_page.save_content_to_database()
+                config.IS_DATABASE_FILLED = 1
+                APP_CONFIG['IS_DATABASE_FILLED'] = 1
+                RELOAD_IS_REQUIRED = 1
+            else:
+                print(CONNECTION_ERROR_MESS)
+                self.uci_page = UCI_page()
+                self.uci_page.dataset_amount=0
         else:
-            print("here")
-            self.init_uci_page()
+            self.uci_page = UCI_page()
             self.init_uci_from_db()
+            uci_page = self.uci_page
+            if internet_on() == True:
+                dataset_amount = self.uci_page.dataset_amount
+                self.init_uci_page()
+                if dataset_amount != self.uci_page.dataset_amount:
+                    self.parse_content_for_page()
+                    self.uci_page.save_content_to_database()
+                else:
+                    self.uci_page = uci_page
 
     def reload_config(self):
         if RELOAD_IS_REQUIRED:

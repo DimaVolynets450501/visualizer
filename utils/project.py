@@ -5,6 +5,7 @@ import csv
 import numpy
 import pandas as pd
 import urllib.request as request
+import socket
 from threading import Thread
 from PyQt5.QtWidgets import QListView
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
@@ -12,11 +13,21 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPushButton
 from PyQt5.QtWidgets import QWidget, QFileDialog, QMessageBox
 
 URL_PATTERN = 'href="(?!Index)[\w|\-|\.]*"'
+REMOTE_SERVER = "www.google.com"
 
 DATASETS_FOLDER = '/home/diman/study/visualizer/datasets'
 QMETHOD = 'QFileDialog.getOpenFileName()'
 FILE_PATTERN = 'Data files (*.data);;Csv files (*.csv)'
 APP_INFORMATION = 'Import dataset message'
+
+def internet_on():
+    try:
+        host = socket.gethostbyname(REMOTE_SERVER)
+        s = socket.create_connection((host, 80), 2)
+        return True
+    except:
+        pass
+    return False
 
 def get_absolute_path():
     return os.getcwd()

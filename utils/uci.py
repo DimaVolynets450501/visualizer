@@ -83,11 +83,7 @@ class UCI_page:
 
     def add_datasets_folder_urls(self):
         for dataset_url in self.uci_datasets_urls:
-            # print("-------------------------------------------------------------------")
-            # print(BASE_UCI_URL_PART+"/"+dataset_url)
             url = self.get_dataset_folder_url(BASE_UCI_URL_PART+"/"+dataset_url)
-            # print(url)
-            # print("-------------------------------------------------------------------")
             self.uci_folder_urls.append(url)
 
     def get_dataset_folder_url(self, dataset_url):

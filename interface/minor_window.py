@@ -22,6 +22,8 @@ colors_list = ['red',
           'red',
           'red']
 
+palette = {0: "yellow", 1: "red", 2: "green", 3: "blue"}
+
 import numpy as np
 from seaborn import heatmap
 from seaborn import pairplot
@@ -48,7 +50,6 @@ class PlotWindow(QDialog):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
         self.canvas.draw()
-        # self.show()
         
     def draw_histogram(self, data):
         self.figure.clear()
@@ -66,7 +67,6 @@ class PlotWindow(QDialog):
     def draw_parallel_coordinates(self, data):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        # ax.legend(loc='top left')
         ax.tick_params(labelsize='6', rotation=30)
         parallel_coordinates(data, 'class', ax=ax)
 
@@ -91,7 +91,6 @@ class PlotWindow(QDialog):
         class_ = data['class']
         data = data.ix[:,1:]
         colors = list()
-        palette = {1: "red", 2: "green", 3: "blue"}
         
         for row in class_: colors.append(palette[row])
         axs = scatter_matrix(data, c=colors ,alpha=0.6 ,figsize=(6, 6), diagonal='kde', ax=ax)
